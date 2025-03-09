@@ -1,0 +1,1 @@
+Las carpetas numeradas son los proyectos modificables de cada componente. La última carpeta "Librería" contiene los archivos .MDF ya listos para ser copipastiados.
