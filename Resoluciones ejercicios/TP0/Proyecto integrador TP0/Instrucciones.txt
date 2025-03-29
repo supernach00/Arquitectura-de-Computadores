@@ -1,0 +1,27 @@
+                                     OPERACIONES:
+
+11 - YY - XXXX leer de la RAM la dirección YY
+00 - YY - XXXX escribir en la RAM el dato XXXX en la dirección YY 
+01 - YY - XXXX sumar el dato de la posición YY de la RAM con el dato XXXX
+11 - YY - XXXX Hace la operación 2A (shift)
+
+                                 SET DE INSTRUCCIONES:
+ ________________________________________________________________________________________
+| N DE INSTRUCCIÓN| OP | DIR |DATA | DESCRIPCIÓN                                          | 
+| ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|‾‾‾‾|‾‾‾‾‾|‾‾‾‾‾|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
+| 0 | 00000000001 | 00 - 00 - 0100 | ESCRIBO EL 4 EN LA DIRECCIÓN 00                      |
+| 1 | 00000000010 | 00 - 01 - 0101 | ESCRIBO EL 5 EN LA DIRECCIÓN 01                      |
+| 2 | 00000000011 | 00 - 10 - 0001 | ESCRIBO EL 1 EN LA DIRECCIÓN 10                      | 
+| 3 | 00000000100 | 00 - 11 - 1111 | ESCRIBO EL 15 EN LA DIRECCIÓN 11                     |
+| 4 | 00000000101 | 11 - 00 - 0000 | LEO LO QUE HAY EN LA DIRECCIÓN 00                    |  
+| 5 | 00000000110 | 11 - 01 - 0000 | LEO LO QUE HAY EN LA DIRECCIÓN 01                    | 
+| 6 | 00000000111 | 11 - 10 - 0000 | LEO LO QUE HAY EN LA DIRECCIÓN 10                    |  
+| 7 | 00000001000 | 11 - 11 - 0000 | LEO LO QUE HAY EN LA DIRECCIÓN 11                    |  
+| 8 | 00000001001 | 01 - 00 - 0001 | SUMO LO QUE ESTÁ EN LA DIRECCIÓN 00 (4) CON 1 = 5    |
+| 9 | 00000001010 | 01 - 01 - 0010 | SUMO LO QUE ESTÁ EN LA DIRECCIÓN 01 (5) CON 2 = 7    |
+| A | 00000001011 | 01 - 10 - 1000 | SUMO LO QUE ESTÁ EN LA DIRECCIÓN 10 (1) CON 8 = 9    |
+| B | 00000001100 | 01 - 11 - 0001 | SUMO LO QUE ESTÁ EN LA DIRECCIÓN 11 (15) CON 1 = 16  |
+| C | 00000001101 | 10 - 00 - 0001 | TOMO EL OPERANDO A (1) Y LO MULTIPLICO POR 2 = 2     |
+| D | 00000001110 | 10 - 00 - 1000 | TOMO EL OPERANDO A (8) Y LO MULTIPLICO POR 2 = 16    |
+|                                                                                         |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
