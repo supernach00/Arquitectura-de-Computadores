@@ -1,0 +1,64 @@
+/Problema 3 
+/Escriba un programa para MARIE que determine la cantidad de números negativos en 
+/un bloque de datos. La longitud del bloque se encuentra almacenada en la dirección 
+/de memoria 0x0010 y el bloque comienza en la dirección 0x0011. Envíe el resultado 
+/a la salida. 
+ORG 100
+			/Almaceno números en el bloque y su longitud
+			Load A
+			Store 011
+			Load B
+			Store 012
+			Load C
+			Store 013
+			Load D 
+			Store 014
+			Load long
+			Store 010
+
+			/Guardo la longitud del bloque en una variable n que se reduce en 1 por cada loop
+			Load 010
+			Store n 
+
+			/Verifico si ya se terminó de recorrer todo el bloque. Cuando n = 0, termine de leer el bloque
+loop,		SkipCond 0C00
+			Jump enviar /Este salto se activa cuando ya recorrí la longitud completa del bloque
+		
+			/Checkeo si el numero es negativo
+			Loadi posicion
+			SkipCond 000 
+			Jump sig /Este salto se activa si el numero es positivo, y pasa al bloque de siguiente posicion
+			Load cantidadNegativos 
+			Add uno
+			Store cantidadNegativos
+
+			/Corro mi posición a la siguiente celda
+sig,		Load posicion
+			Add uno
+			Store posicion
+			
+			
+			/Diminuyo en uno la variable de iteracion
+			Load n
+			Subt uno
+			Store n
+
+			Jump loop /Arranco de nuevo
+
+enviar,		Load cantidadNegativos / Ya se recorrió todo el bloque , envío la información a la salida
+			Store 200 /Asumí que el registro de salida es el 200
+			Halt
+
+
+cantidadNegativos, DEC 0
+uno, DEC 1			
+n, DEC 0			
+largo, DEC 0			
+posicion, HEX 0011
+
+/Creo el bloque para testear. Tiene 2 numeros negativos y 2 positivos. Además indico la longitud del bloque.
+A, DEC -6
+B, DEC 4
+C, DEC -3
+D, DEC 10
+long, DEC 4
