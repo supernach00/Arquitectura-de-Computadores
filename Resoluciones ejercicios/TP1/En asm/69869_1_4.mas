@@ -1,0 +1,61 @@
+/Ignacio Nahuel Chantiri - 69869/1 - 2025
+
+/Problema 4 
+/Escriba un programa que calcule los primeros 20 elementos de la sucesión de 
+/Fibonacci y los almacene en orden creciente en posiciones consecutivas de memoria 
+/empezando en 0x0040. Verificación: El vigésimo término debe valer 0x1055 y debe 
+/quedar almacenado en la posición de memoria 0x53. 
+
+ORG     100     /Planteo la resolucion con 3 valores: un anterior, un actual y un siguiente.
+                /donde siguiente = actual + anterior
+
+                /Este bloque resta 2 a n, donde n es la cantidad de iteraciones que quiero hacer. 
+                /Le resto 2 porque los dos primeros terminos ya estan declarados (1 y 0)
+                /y para que el n declarado al final corresponda directamente a la cantidad de iteraciones que quiere el usuario.
+                Load    n
+                Subt    uno
+                Subt    uno
+                Store   n
+
+                /Cargo el cero en la primer posicion, como valor anterior
+                Load    cero
+                Storei  anterior
+
+                /Guardo el uno como el valor actual
+                Load    uno
+                Storei  actual
+
+                /Al valor actual le sumo el anterior, y lo guardo en una variable auxiliar
+deNuevo,        Loadi   actual
+                Addi    anterior
+                Store   siguiente
+
+                /Aumento la direccion de celda actual y anterior en uno
+                Load    actual
+                Add     uno
+                Store   actual
+
+                Load    anterior
+                Add     uno
+                Store   anterior
+
+                /Guardo el valor auxiliar calculado previamente como nuevo valor actual
+                /NOTA: anterior ya queda actualizado al mover la direccion de la celda en el paso previo
+                Load    siguiente
+                Storei  actual
+
+                /Reduzco n en uno e itero de nuevo si es necesario
+                Load    n
+                Subt    uno
+                Store   n
+                SkipCond 400
+                Jump    deNuevo
+                Halt
+
+n,              DEC     20 /Cantidad de numeros de la serie que se desea calcular (incluidos el 0 y el 1)
+cero,           DEC     0
+uno,            DEC     1
+
+anterior,       HEX     40 /ojo: anterior y actual son punteros, siguiente no (la uso como variable auxiliar)
+actual,         HEX     41
+siguiente,      DEC     0

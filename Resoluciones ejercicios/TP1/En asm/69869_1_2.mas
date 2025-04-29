@@ -1,0 +1,45 @@
+/Ignacio Nahuel Chantiri - 69869/1 - 2025
+
+/Problema 2 
+/Escriba un programa que calcule el largo de una cadena de caracteres que comienza 
+/en la dirección 0x0100 y termina con el carácter CR= 0x0D (Carriage Return, 
+/retorno de carro).
+
+ORG 050
+
+loop,       Loadi   posicion /Cargo la primer posición y la comparo con el Carriage Return, si son iguales voy a Halt
+            Subt    test
+            SkipCond 0C00
+            Jump salir
+
+            /Sumo uno al contador de caracteres (largo)
+            Load    largo
+            Add     uno
+            Store   largo
+
+            /Apunto a la siguiente poisición
+            Load    posicion
+            Add     uno
+            Store   posicion
+
+			/Itero nuevamente
+            Jump    loop
+
+salir,      Load largo
+            Output
+            Halt
+
+uno,        DEC     1
+posicion,   HEX     062
+largo,      DEC     0 /El largo queda guaraddo acá. También se muestra en el Output.
+test,       HEX     0D
+
+/Cadenade prueba, IMPORTANTE: Para utilizar la cadena de prubea, posicion se inicializa en HEX 062. 
+/Si se quiere leer una cadena que inicia en 0x100, como pide el enunciado, posicion se debe inicializar en HEX 100.
+
+            HEX 48 / H
+            HEX 4F / O
+            HEX 4C / L
+            HEX 41 / A
+            HEX 0D / CR 
+

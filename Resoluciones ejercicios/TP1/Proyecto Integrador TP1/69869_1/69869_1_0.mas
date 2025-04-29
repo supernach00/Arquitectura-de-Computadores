@@ -1,0 +1,97 @@
+/Proyecto Integrador: Algoritmos de ordenamiento
+/Proponga un programa que ordene en forma creciente un vector de números enteros de
+/16 bits en Ca2. La longitud del vector se encuentra almacenada en la posición de
+/memoria 0x001 y el vector comienza en la dirección 0x002. El resultado del
+/programa debe ser almacenado en la misma ubicación del vector original.
+
+/ Algoritmo de ordenamiento en MARIE
+/ Ignacio Nahuel Chantiri, 69869/1, 2025
+/ Algoritmo utilizado: Bubble Sort
+/ Ocupación de memoria de programa: 39 instrucciones (78 bytes)
+/ Ocupación de memoria de datos (sin incluir el vector): 9 datos (18 bytes)
+/ Performance: O(n) en el mejor caso, O(n^2) en el peor caso.
+/ Vector ordenado    -3,-2,-1,0,1,2,3 : 106 instrucciones, 713 ciclos de reloj
+/ Vector invertido   3,2,1,0,-1,-2,-3 : 527 instrucciones, 3739 ciclos de reloj
+/ Vector desordenado 0,-2,1,3,-1,2,-3 : 477 instrucciones, 3299 ciclos de reloj
+
+        ORG 000
+        Jump Loop1 /000
+        largo, DEC 7 /001
+        DEC 3 /002
+        DEC 2 /003 posicionA incial 
+        DEC 1 /004 posicionB inicial
+        DEC 0 /005
+        DEC -1 /006
+        DEC -2 /007
+        DEC -3 /008
+ 
+        posicionA, HEX 002
+        posicionB, DEC 003
+        B, DEC 0
+        uno, DEC 1
+        dos, DEC 02
+        tres, DEC 03
+        largoAux, DEC 0
+        permutaciones, DEC 0
+        n, DEC 1
+
+Loop1,      Clear /Reinicio el contador de permutaciones
+            Store permutaciones
+
+			/Defino hasta que posición del vector recorro
+            Load largo
+            Subt n
+            Store largoAux 
+
+            /Reinicio las posiciones
+            Load dos
+            Store posicionA
+            Load tres
+            Store posicionB
+
+Loop2,      Loadi posicionB /Dispongo A y B para compararlos            
+            Store B
+            Loadi posicionA
+
+            /Comparación
+            Subt B /A - B
+            SkipCond 800 /Esto se activa cuando hay que permutar
+            Jump continuar /Este salto se activa cuando no hay que permutar
+
+            / Permutación
+            Loadi posicionA              /Cargo a y lo guardo en la posicion b
+            Storei posicionB
+            Load B                       /Cargo b y lo guardo en la posicion a
+            Storei posicionA
+
+            /Agrego la permutación hecha al contador de permutaciones
+            Load uno
+            Store permutaciones
+
+continuar,  Load largoAux /Actualizo el flag que indica si terminé de recorrer el vector o no
+            Subt uno
+            Store largoAux
+			
+            Skipcond 800 /Si no se terminó de recorrer el vector salto a continuar2
+            Jump fin /Este salto se activa cuando terminé de recorrer el vector
+			Jump continuar2
+
+fin,        Load n /Reduzco el largo que tengo que recorrer en uno
+            Add uno
+			Store n
+
+            /Checkeo si el vector está ordenado
+            Load permutaciones
+            SkipCond 400
+            Jump Loop1  /Si hubo al menos una permutación, vuelvo a recorrer el vector desde el principio.
+
+            Halt  /Si las permutaciones fueron cero en este recorrido, el vector debe estar ordenado.
+
+
+continuar2, Load posicionB /Aumento las posiciones A y B
+            Store posicionA
+            Add uno
+            Store posicionB
+
+			/Continuo recorriendo el mismo vector con los dos elementos siguientes
+            Jump Loop2

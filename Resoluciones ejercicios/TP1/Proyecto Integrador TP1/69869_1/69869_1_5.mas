@@ -1,0 +1,95 @@
+/Ignacio Nahuel Chantiri - 69869/1 - 2025
+
+/Problema 5 
+/Implemente como subrutina el programa de multiplicación iterativa sin signo que se 
+/ofrece como ejemplo en el simulador y se discute en la guía de ejercicios 
+/resueltos. Utilice dos posiciones de memoria fijas para pasar los argumentos y una 
+/más para el resultado. 
+
+/"main"
+                /Recibo inputs del usuario y los guardo en las celdas X y Y que va a utilizar la subrutina.
+                /El resultado (X*Y) se guarda en el registro Z y se manda también al output.
+
+                /Inputs
+                Input
+                Store   X
+                Input
+                Store   Y
+
+                JnS     subr        /Guardo la dirección de la siguiente instrucción en la dirección subr y paso a subr+1
+                Load    result      /Ya terminada la subrutina, cargo el result en la celda "Z"
+                Store   Z
+                Output
+                Halt
+
+/Subrutina
+subr,           HEX     0
+                Clear
+                Store   result
+                Load    Y
+                Store   Yaux        /A partir de acá me manejo con Yaux, porque no quiero modificar mi Y original
+
+                /Checkea si Yaux es negativo
+                Load    Yaux
+                Skipcond 000
+                Jump    nonneg
+
+                /Entra a este bloque solo si Yaux es negativo. Convierte Yaux en un valor positivo
+                Subt    Yaux
+                Subt    Yaux
+                Store   Yaux
+
+                /Carga un flag indicando negativo
+                Clear
+                Add     one
+                Store   negflag
+                Clear
+                Jump    loop
+
+                /Entra a este bloque solo si el número Yaux es positivo
+nonneg,         Clear
+                Store   negflag /Pone el flag de negativo en 0
+
+                /Checkea si es cero, si lo es, va a fin; si no, pasa a loop a hacer la operación
+                Load    Yaux
+                Skipcond 400
+                Jump    loop
+                Jump    fin
+
+                /Acá hace la suma iterativa. Este bloque se repite siempre y cuando Yaux no sea cero
+loop,           Load    result
+                Add     X
+                Store   result
+
+                Load    Yaux
+                Subt    one
+                Store   Yaux
+
+                Skipcond 400 /Ya se completó la multiplicación?
+                Jump    loop
+
+                /Se fija si había flag de negativo. Si lo hay, niega el resultado; si no, pasa a fin
+                Load    negflag
+                Skipcond 800
+                Jump    fin
+
+                /Niega el resultado (result - 2*result = -result)
+                Load    result
+                Subt    result
+                Subt    result
+                Store   result
+
+                /Guarda el resultado en la variable result. Termina la subrutina y vuelve al programa principal.
+fin,            Load    result
+                Jumpi   subr
+
+/Datos de la subrutina de multiplicación
+one,            DEC     1
+negflag,        DEC     0
+result,         DEC     0
+Yaux,           DEC     0
+
+/Datos del "main"
+X,              DEC     12
+Y,              DEC     12
+Z,              DEC     0

@@ -1,0 +1,102 @@
+/Ignacio Nahuel Chantiri - 69869/1 - 2025
+
+/Problema 6 
+/Escriba una subrutina que calcule el factorial de un número entero utilizando la 
+/subrutina de multiplicación del problema anterior. ¿Puede explotarse la 
+/recursividad de la operación factorial? Recuerde que: n! = n*(n-1)!
+
+/Utilizando recursividad, puedo calcular (n-1)! llamando a la subrutina que calcula factorial. 
+/De todos modos, el problema está resuelto sin recursividad.
+
+                Load    n
+                JnS     subrF
+                Output
+				
+                Halt
+
+subrF,          HEX     0 /Defino n y n-1, como X e Y respectivamente
+                Store   X
+                Subt    uno
+                Store   Y
+				
+deNuevo,        JnS     subrM /Multiplico X * Y = n * (n-1), guardo el resultado en X
+                Store   X
+                Load    Y 
+                Subt    uno
+                Store   Y
+
+				/Check si Y vale 1
+                Subt    uno 
+                Skipcond 400
+                Jump    deNuevo
+				Load X
+                Store   resultadoNfact
+                JumpI   subrF
+
+/Subrutina multiplicación Mult[X,Y] = result
+
+subrM,          HEX     0
+                Clear
+                Store   result
+                Load    Y
+                Store   Yaux /A partir de acá me manejo con Yaux, no quiero modificar Y original
+
+                /Checkea si Yaux es negativo
+                Load    Yaux
+                Skipcond 000
+                Jump    nonneg
+
+                /Convierte Yaux a positivo
+                Subt    Yaux
+                Subt    Yaux
+                Store   Yaux
+
+                /Setea flag de negativo
+                Clear
+                Add     uno
+                Store   negflag
+                Clear
+                Jump    loop
+
+nonneg,         Clear
+                Store   negflag
+
+                Load    Yaux
+                Skipcond 400
+                Jump    loop
+                Jump    fin
+
+loop,           Load    result
+                Add     X
+                Store   result
+
+                Load    Yaux
+                Subt    uno
+                Store   Yaux
+
+                Skipcond 400
+                Jump    loop
+
+                Load    negflag
+                Skipcond 800
+                Jump    fin
+
+                Load    result
+                Subt    result
+                Subt    result
+                Store   result
+
+fin,            Load    result
+                JumpI   subrM
+
+/Datos main
+n,              DEC     6 /Para calcular 6!
+resultadoNfact, DEC     1
+
+/Datos de la subrutina de multiplicación
+X,              DEC     0
+Y,              DEC     0
+uno,            DEC     1
+negflag,        DEC     0
+result,         DEC     0
+Yaux,           DEC     0

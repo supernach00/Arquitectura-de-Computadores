@@ -1,0 +1,94 @@
+/Problema 5 
+/Implemente como subrutina el programa de multiplicación iterativa sin signo que se 
+/ofrece como ejemplo en el simulador y se discute en la guía de ejercicios 
+/resueltos. Utilice dos posiciones de memoria fijas para pasar los argumentos y una 
+/más para el resultado. 
+
+/"main"
+/Recibo inputs del usuario y los guardo en las celdas X y Y que va a utlizar la subrutina. El resultado (X*Y) se guarda en el registro Z y 
+/se manda tambien al output.
+
+/Inputs
+Input
+Store X
+Input
+Store Y
+
+JnS subr /Guardo la dirección de la siguiente instrucción en la direccion subr y paso a subr+1
+Load result /Ya teriminada la subrutina, cargo el result en la celda "Z"
+Store Z 
+Output
+Halt
+		
+/Subrutina
+subr,	HEX 0
+		Clear
+		Store result
+		Load Y
+		Store Yaux /A partir de aca me manejo con Yaux, porque no quiero modificar mi Y original (la subrutina haría que Y valga cero al final)
+		
+		/Checkea si Yaux es negativo
+		Load Yaux
+		Skipcond 000
+		Jump nonneg
+		
+		/Entra a este bloque solo si Yaux es negativo. Convierte Yaux en un valor positivo (-Y -(-2Y) = Y)
+		Subt Yaux
+		Subt Yaux
+		Store Yaux
+		
+		/Carga un flag indicando negativo
+		Clear 
+		Add one
+		Store negflag
+		Clear
+		Jump loop
+		
+		/Entra a este bloque solo si el numero Yaux es positivo
+		nonneg,  Clear
+		         Store negflag /Pone el flag de negativo en 0
+		         / Checkea si es cero, si lo es, va a fin, sino, pasa a loop a hacer la operacion
+		         Load Yaux
+		         Skipcond 400
+		         Jump loop / false
+		         Jump fin / true
+		
+		/Acá hace la suma iterativa. Este bloque se repite siempre y cuando Y no sea cero
+		loop,    Load result
+		         Add X
+		         Store result
+		
+		         Load Yaux
+		         Subt one
+		         Store Yaux
+			
+		         Skipcond 400 / have we completed the multiplication?
+		         Jump loop / no; repeat loop
+		         / yes, so exit the loop
+		
+		/Se fija si habia flag de negativo. Si lo hay, niega el resultado, sino, pasa a fin
+		Load negflag
+		Skipcond 800
+		Jump fin
+		
+		/ Niega el resultado (result - (2result) = -result)
+		Load result
+		Subt result
+		Subt result
+		Store result
+		
+		/ Guarda el resultado en la variable result. Termina la subrutina y vuelvo al programa principal.
+		fin,    Load result
+		        Jumpi subr /Vuelvo al main
+
+/Datos de la subrutina de multiplicacion
+
+one, DEC 1
+negflag, DEC 0
+result, DEC 0
+Yaux, DEC 0
+
+/Datos del "main?"
+X, DEC 12
+Y, DEC 12
+Z, DEC 0

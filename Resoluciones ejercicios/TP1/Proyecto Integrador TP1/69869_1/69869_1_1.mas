@@ -1,0 +1,42 @@
+/Ignacio Nahuel Chantiri - 69869/1 - 2025
+
+/Problema 1 
+/Proponga un programa para MARIE que calcule, utilizando una iteración, los 
+/primeros 10 múltiplos de 7 y los almacene ordenados en forma creciente en la 
+/memoria, comenzando en la dirección 0x0050. Compare la iteración resultante con 
+/con las estructuras de alto nivel conocidas (for, if, while, etc.). Compare con el 
+/código que resultaría si en lugar de utilizar una iteración, se utilizara sólo una 
+/secuencia de instrucciones. 
+
+/Considero que cero es el primer multiplo de 7 (queda ubicado en 0x0050):
+
+ORG 100
+        /Sumo 7 al contenido de posicion
+Loop,   Loadi   posicion 
+        Add     siete
+        Store   acum
+
+        /Avanzo de posición
+        Load    uno 
+        Add     posicion
+        Store   posicion
+
+        /Guardo el número calculado en la nueva posición
+        Load    acum 
+        StoreI  posicion
+
+        /Cuento la iteración
+        Load    flag 
+        Subt    uno
+        Store   flag
+
+        /Comienzo de nuevo siempre y cuando flag sea distinto de cero
+        SkipCond 400
+        Jump    Loop            
+        Halt
+
+flag,       DEC 9 / Son n-1 iteraciones, ya que el cero queda definido de comienzo
+uno,        DEC 1
+siete,      DEC 7
+posicion,   HEX 50
+acum,       HEX 0
