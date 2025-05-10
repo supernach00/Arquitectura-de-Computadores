@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  D:\INGEÑERIA\Arquitectura de Computadores\Resoluciones ejercicios\TP2\Problema 2\Problema 2\main.asm Mon May 05 15:49:51 2025
+AVRASM ver. 2.2.8  C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Problema 2\Problema 2\main.asm Tue May 06 16:09:15 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -695,3 +695,11 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
+DEF  Multiplicador r16
+DEF  MultiplicandoL r17
+DEF  MultiplicandoH r18
+DEF  SumaParcialH r22
+DEF  SumaParcialL r21
+CSEG LUP          00000003
+CSEG ZER          00000007
+CSEG FIN          0000000c

@@ -15,18 +15,32 @@
 ; realice el cociente entre dos números positivos, donde el divisor y el cociente 
 ; sean de un byte y el dividendo de dos bytes. 
 
+;B)
 
 ; Carga de operandos:
 
-    LDI R16, $02 ; Cargo el multiplicador en el R16 (1 byte)
-	LDI R17, $AA ; Cargo la parte baja del multiplicando en R17 (1 byte)
-	LDI R18, $0A ; Cargo la parte alta del multiplicando en R18 (1 byte)
+	.DEF Multiplicador = R16
+	.DEF MultiplicandoL = R17
+	.DEF MultiplicandoH = R18 
+	.DEF SumaParcialH = R22
+	.DEF SumaParcialL = R21
 
-	MUL R17, R16; Realizo (Multiplicando low) x (Multiplicador). Se guarda en los registros R1:R0.
-	MOVW R25:R24, R1:R0 ; Muevo el resultado de la parte baja a R25:R24
+    LDI R16, $05 ; Cargo el multiplicador en el R16 (1 byte)
+	LDI R17, $FF ; Cargo la parte baja del multiplicando en R17 (1 byte)
+	LDI R18, $0F ; Cargo la parte alta del multiplicando en R18 (1 byte)
 
-	MUL R18, R16; Realizo (Multiplicando high) x (Multiplicador). Se guarda en los registros R1:R0.
-	MOVW R27:R26, R1:R0 ; Muevo el resultado de la parte alta a R27:R26
+LUP:LSR Multiplicador 
+	BRCC ZER ; Salta a UNO si el bit del multiplicador es uno.
 
+    ADD SumaParcialL, MultiplicandoL
+	ADC SumaParcialH, MultiplicandoH
 
+ZER:LSL MultiplicandoL
+	ROL MultiplicandoH
+
+	TST Multiplicador
+	BREQ FIN
+	RJMP LUP
+
+FIN:RJMP FIN
 
