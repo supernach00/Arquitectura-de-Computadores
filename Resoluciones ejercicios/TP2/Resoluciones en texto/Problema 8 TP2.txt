@@ -1,0 +1,76 @@
+;
+; Problema8TP2.asm
+;
+; Created: 14/5/2025 10:20:28
+; Author : nacho
+;
+; Problema 8 
+; a) Proponga un programa que detecte errores de información dispuesta en 
+; codificación de paridad simple con 7 bits de datos y 1 de paridad. Estime el 
+; tiempo de retardo de la subrutina. Verifique el funcionamiento del detector de 
+; errores con los siguientes paquetes de datos codificados con el método de paridad: 
+; 11010111, 11010101, 10010101 (los bits están codificados como p7b6b5b4b3b2b1b0 en 
+; donde los 7 bits menos significativos de 1 byte son de datos y el más 
+; significativo es de paridad). 
+; b) Implemente el problema anterior en el kit de manera que, cada vez que se 
+; presione un pulsador conectado a un pin del MCU, se decodifiquen los bytes 
+; propuestos. Si se detecta un error en la paridad, se debe encender el LED.  
+; c) Implemente configurando el pin del pulsador como una interrupción externa. 
+; Indique cuál es la diferencia respecto a la implementación del inciso a).
+
+; Elijo paridad par: el bit de paridad hace que haya una cantidad PAR de unos.
+; Coloco el bit de paridad a la izquierda de los bits de datos: PDDDDDDD, como pide el enunciado.
+
+; a)
+
+.DEF AUX = R17 ; Registro auxiliar
+.DEF PAR = R18 ; Contador de unos
+.DEF ONE = R19 ; Constante uno
+.DEF ERO = R20 ; Registro indicador de error
+.DEF N = R21 ; Cantidad de bytes a testear
+
+RJMP STR
+
+STR:CLR R26 ; Cargo el paquete de datos en ram, comenzando en 0x0100.
+	LDI R27, $01
+	
+	LDI R16, 0b11010111 ;0x100
+	ST X+, R16  
+	LDI R16, 0b11010101 ;0x101
+	ST X+, R16  
+	LDI R16, 0b10010101 ;0x102
+	ST X+, R16
+
+	LDI N, $03 ; Seteo el largo del paquete de datos.
+
+	CLR R26 ; Reinicio X.
+	LDI R27, $01
+
+	LDI ONE, $01 ; Cargo la constante uno.
+
+; Detección de cantidad de unos.
+
+SIG:LD AUX, X+
+LUP:LSL AUX ; Shifteo a la izquierda
+	BRCC ZER; (Branch if carry is cleared)
+
+	ADD PAR, ONE ; Si el carry se detectó en uno, lo cuento en el registro PAR.
+	RJMP LUP
+
+ZER:TST AUX; Testeo si son todos ceros. Si lo son, termino, sino, salto a lup.
+	BREQ FIN
+	RJMP LUP
+
+FIN:LSR PAR; El bit menos significativo de PAR se mete en el carry. Si es cero, la cantidad de unos es par, si es uno, es impar.
+    BRCS ERR
+
+	CLR PAR ; Reinicio el contador de unos.
+
+	SUB N, ONE
+	BREQ LPE; Si se testearon todos los bytes, termino el programa.
+
+	RJMP SIG ; Sino, continúo testeando el siguiente byte.
+	
+ERR:LDI ERO, $FF; Notifico el error. Escribo en el registro ERO todos unos si se detectó error en alguno de los bits testeados. X queda apuntando al byte que dió error.
+
+LPE:RJMP LPE ; Loop eterno.

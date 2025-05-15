@@ -5,14 +5,14 @@
 ; Author : nacho
 
 ; Problema 2 
-; Desarrolle un programa para AVR que realice el producto entre dos números 
+; Desarrolle un programa para AVR que realice el producto entre dos nÃºmeros 
 ; positivos, donde el multiplicando y el producto sean de dos bytes y el 
-; multiplicador de un byte: a) Utilizando la instrucción MUL. b) Sin utilizar la 
-; instrucción MUL.  Calcule el tiempo de ejecución de cada procedimiento. ¿Qué rango 
-; de validez tiene cada variable?, ¿Qué ocurre si se lo sobrepasa? ¿Cómo 
-; solucionaría este inconveniente? ¿La instrucción MUL está disponible en todas las 
+; multiplicador de un byte: a) Utilizando la instrucciÃ³n MUL. b) Sin utilizar la 
+; instrucciÃ³n MUL.  Calcule el tiempo de ejecuciÃ³n de cada procedimiento. Â¿QuÃ© rango 
+; de validez tiene cada variable?, Â¿QuÃ© ocurre si se lo sobrepasa? Â¿CÃ³mo 
+; solucionarÃ­a este inconveniente? Â¿La instrucciÃ³n MUL estÃ¡ disponible en todas las 
 ; implementaciones de AVR? Finalmente, proponga un algoritmo adecuado para AVR que 
-; realice el cociente entre dos números positivos, donde el divisor y el cociente 
+; realice el cociente entre dos nÃºmeros positivos, donde el divisor y el cociente 
 ; sean de un byte y el dividendo de dos bytes. 
 
 ;B)
@@ -43,4 +43,7 @@ ZER:LSL MultiplicandoL
 	RJMP LUP
 
 FIN:RJMP FIN
+
+
+
 

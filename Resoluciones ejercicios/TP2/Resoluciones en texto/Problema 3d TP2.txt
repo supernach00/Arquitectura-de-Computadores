@@ -1,0 +1,56 @@
+;
+; Problema 3.asm
+;
+; Created: 5/5/2025 12:54:56
+; Author : nacho
+
+; Problema 3 
+; D) Proponga una secuencia de instrucciones AVR que invierta el orden de un arreglo 
+; de caracteres que se encuentra almacenado en los registros r0~r9 y almacene el 
+; arreglo invertido en los registros r10~r19. 
+
+; Carga del vector en los registros desde r0 a r9
+
+    LDI R16, $01 
+	LDI R17, $02 
+	LDI R18, $03
+	LDI R19, $04
+	LDI R20, $05
+	LDI R21, $06
+	LDI R22, $07
+	LDI R23, $08
+	LDI R24, $09
+	LDI R25, $0A
+
+	MOV R0, R16
+	MOV R1, R17
+	MOV R2, R18
+	MOV R3, R19
+	MOV R4, R20
+	MOV R5, R21
+	MOV R6, R22
+	MOV R7, R23
+	MOV R8, R24
+	MOV R9, R25
+
+	LDI R21, $0A 
+
+	; Cargo en el registro X la dirección del último registro fuente + 1 (r9, $09+1 = $0A) El +1 por el pre-decremento.
+	LDI R26, $0A
+	CLR R27
+
+	; Cargo en el registro Y la dirección del primer registro de destino (r10, $0A)
+	LDI R28, $0A
+	CLR R29
+
+	; Guardo en el registro destino (apuntado por Y) lo que hay en el registro origen (apuntado por X)
+	; AUX (R20) es un registro auxiliar y N (R21) es el contador de iteraciones (9).
+	.DEF N = R21
+	.DEF AUX = R20
+
+LUP:LD R20, -X
+	ST Y+, R20
+	SUBI N, $01
+	BRBC 1, LUP
+
+FIN:RJMP FIN

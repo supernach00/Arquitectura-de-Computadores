@@ -1,0 +1,116 @@
+;
+; Problema6TP2.asm
+;
+; Created: 14/5/2025 10:20:12
+; Author : nacho
+;
+; Problema 6 
+; Genere una cadena de caracteres codificados en ASCII con su apellido en minúsculas 
+; seguido por un caracter nulo y su número de alumno. La cadena debe comenzar en la 
+; dirección 0x0100 y terminar con el caracter CR=0x0D (Carriage Return, retorno de 
+; carro). Luego, utilizando una subrutina, reemplace las letras minúsculas por 
+; mayúsculas y los caracteres 0 por caracteres Espacio (SP=0x20). Almacene la nueva 
+; cadena en la dirección 0x0120.
+
+; Defino la cadena en decimal: chantiri 698691 = (DEC) 99 104 97 110 116 105 114 105 0 6 9 8 6 9 1 13 
+; En hexadecimal : (HEX) 63 68 61 6E 74 69 72 69 00 06 09 08 06 09 01 0D
+
+.DEF AUX = R17 ; Registro auxiliar
+.DEF TD = R18 ; Treinta y Dos
+.DEF CR = R19  ; Carriage Return
+.DEF TEN = R20 ; Diez
+
+RJMP STR
+
+STR:LDI TD, $20 ; Cargo la constante 32.
+	LDI CR, $0D ; Caracter de retorno
+	LDI TEN, $14 ; Constante 10.
+
+	; Guardo la cadena en la dirección $0100 hasta $010F
+
+	LDI R16, $63 
+	STS $0100, R16
+	LDI R16, $68 
+	STS $0101, R16
+	LDI R16, $61 
+	STS $0102, R16
+	LDI R16, $6E 
+	STS $0103, R16
+	LDI R16, $74 
+	STS $0104, R16
+	LDI R16, $69 
+	STS $0105, R16
+	LDI R16, $72 
+	STS $0106, R16
+	LDI R16, $69 
+	STS $0107, R16
+	LDI R16, $00 
+	STS $0108, R16
+	LDI R16, $06 
+	STS $0109, R16
+	LDI R16, $09 
+	STS $010A, R16
+	LDI R16, $08 
+	STS $010B, R16
+	LDI R16, $06 
+	STS $010C, R16
+	LDI R16, $09 
+	STS $010D, R16
+	LDI R16, $01 
+	STS $010E, R16
+	LDI R16, $0D ; CR
+	STS $010F, R16 
+
+; Incializo el stack
+
+	LDI R16, high($08FF)
+	OUT SPH, R16
+
+	LDI R16, low($08FF)
+	OUT SPL, R16
+
+	CALL MAY ; Llamado a subrutina MAYuscula
+
+LPE:RJMP LPE ;( LuP Eterno)
+	
+; La subrutina MAY tiene el siguiente comportamiento:
+; Se recorre iterativamente la cadena hasta encontrar $0D.
+; Como los caracteres de letras min y may en ASCII están espaciados 32 unidades, cada vez
+; que detecta una letra minúscula (considera cualquier número mayor a 9) se le resta 32 y se lo guarda 20 unidades de memoria adelante.
+; Cada vez que detecta un número entre el 1 y el 9 (Se le resta 10 y se verifica el signo), lo guarda sin modificaciones, 20 unidades de memoria más adelante.
+; Cada vez que detecta un cero, le suma 32 y lo guarda 20 unidades de memoria adelante.
+
+MAY:CLR R28; Utilizo Y como puntero para recorrer la cadena, lo incializo en 0x0100
+	LDI R29, $01
+	
+LUP:LD AUX, Y ; Cargo el elemento.
+
+	SUB AUX, CR ; Checkeo si el caracter apuntado es el retorno ($0D). Si lo es, salgo de MAY.
+	BREQ FIN 
+
+	LD AUX, Y; Checkeo si el caracter apuntado es cero. Si lo es, salto a ZER para sumarle 32.
+	TST AUX
+	BREQ ZER
+
+	; Si no es cero, checkeo si el caracter apuntado es un número entre 1 y 9. Le resto 10 y si da negativo, debe ser 9 o menor.
+
+	LD AUX, Y
+	SUB AUX, TEN
+	LD AUX, Y
+	BRMI SAV ; Si es negativo, salto a guardar tal cual. 
+
+	LD AUX, Y ; Sino, le resto 32 y lo guardo 20 celdas más adelante.
+	SUB AUX, TD 
+SAV:STD Y+20, AUX
+
+	ADIW Y, $01 ; Incremento manualmente el puntero Y.
+
+	RJMP LUP ; Continúo iterando hasta encontrar el CR.
+
+ZER:LD AUX, Y 
+	ADD AUX, TD
+	RJMP SAV ; Salto a guardar.
+
+FIN: RET
+	
+	

@@ -1,0 +1,87 @@
+;
+; Problema7TP2.asm
+;
+; Created: 15/5/2025 09:46:11
+; Author : nacho
+;
+; Problema 7 
+; En dos direcciones consecutivas de memoria se encuentra contenido un BCD (Binary coded decimal) menor a
+; 10000. Indique en cuatro posiciones de memoria consecutivas las cantidades de 
+; unidades de mil, centenas, decenas y unidades que contiene dicho número.
+
+; Tengo 2 bytes: 00000000 00000000, que en BCD se divide: 0000 0000 0000 0000, numero máximo 9999.
+; La parte alta del primer byte son las unidades de mil
+; La parte baja del primer byte son las centenas
+; La parte alta del segundo byte son las decenas
+; La parte baja del segundo byte son las unidades
+
+; Voy a testear con el 4592 DEC, osea (0100 0101) (1001 0010) en BCD
+
+; Defino algunos registros para llevar la cuenta
+
+.DEF MIL = R20 ; Unidades de mil
+.DEF CEN = R21 ; Centenas
+.DEF DEN = R22 ; Decenas
+.DEF UNI = R23 ; Unidades
+
+.DEF MSKH = R17 ; Máscara para aislar nibble alto
+.DEF MSKL = R18; Máscara para aislar nibble bajo
+
+.DEF AUX = R19
+
+RJMP STR
+
+; Cargo en memoria (0x100, 0x101) los dos bytes correspondientes al número 4292
+
+STR:LDI R16, $45 ;(0b01000101) Parte alta
+	STS $0100, R16
+	LDI R16, $92 ;(0b10010010) Parte baja
+	STS $0101, R16
+
+	; Guardo en X la dirección del número
+
+	CLR R26
+	LDI R27, $01
+
+	; Defino las máscaras
+
+	LDI MSKH, 0b11110000
+	LDI MSKL, 0b00001111
+
+	; Proceso las unidades de mil
+
+	LD AUX, X
+	AND AUX, MSKH ; queda 0100 0000 en AUX
+	SWAP AUX ; queda 0000 0100 en AUX, el valor correcto (4)
+	MOV MIL, AUX
+
+	; Proceso las centenas
+
+	LD AUX, X+ ; Aumento el puntero. Queda apuntando al segundo byte para el proceso de decenas.
+	AND AUX, MSKL
+	MOV CEN, AUX
+
+	; Proceso las decenas
+
+	LD AUX, X
+	AND AUX, MSKH
+	SWAP AUX
+	MOV DEN, AUX
+
+	; Proceso las unidades
+
+	LD AUX, X+ ;Aumento el puntero X. Queda apuntando a donde voy a guardar los valores finales en ram.
+	AND AUX, MSKL
+	MOV UNI, AUX
+
+	; Guardo en ram, en los siguientes 4 espacios consecutivos.
+
+	ST X+, MIL
+	ST X+, CEN
+	ST X+, DEN
+	ST X+, UNI
+
+	; En ram : 01000101 10010010 00000100 00000101 00001001 00000010
+	;           0x0100   0x0101   0x0102   0x0103   0x0104   0x0104
+
+FIN:RJMP FIN

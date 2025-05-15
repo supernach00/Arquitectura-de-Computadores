@@ -1,0 +1,77 @@
+;
+; Problema5TP2.asm
+;
+; Created: 14/5/2025 08:42:27
+; Author : nacho
+;
+; Problema 5  
+; Diseñe y codifique para AVR una subrutina que retorne el mínimo de un vector. 
+; Verifique su funcionamiento en ATmel Studio. Recuerde inicializar correctamente la 
+; pila para poder utilizarla. 
+
+.DEF MINI = R17
+.DEF AUX = R18
+.DEF N = R19
+
+RJMP STR
+
+STR:LDI R16, $02 ; Cargo el vector en los registros r0-r19.
+	MOV R0, R16 
+	LDI R16, $06 
+	MOV R1, R16
+	LDI R16, $04 
+	MOV R2, R16
+	LDI R16, $0A 
+	MOV R3, R16
+	LDI R16, $02 
+	MOV R4, R16
+	LDI R16, $09
+	MOV R5, R16
+	LDI R16, $07 
+	MOV R6, R16
+	LDI R16, $03 
+	MOV R7, R16
+	LDI R16, $0F 
+	MOV R8, R16
+	LDI R16, $0E 
+	MOV R9, R16
+
+	;Inicio la pila, $08FF es la dirección del fin de la RAM.
+
+	LDI R16, high($08FF)   ; Cargo byte alto del stack pointer.
+	OUT SPH, R16            
+
+	LDI R16, low($08FF)    ; Cargo byte bajo del stack pointer.
+	OUT SPL, R16            
+
+	; Aguante el R16 viejo, es de fierro.
+
+	LDI N, $09 ; Cargo el largo del vector en el contador de iteraciones -1.
+
+	CALL MNV ; Llamo la subrutina *MiNimo de un Vector*. La dirección de retorno se guarda en el SP.
+
+	END:RJMP END 
+
+MNV:LDI R26, $01 ; Cargo en el puntero auxiliar X la dirección de R1.
+	CLR R27
+
+	MOV MINI, R0 ; Inicializo MINI como el primer valor del vector
+
+LUP:TST N
+	BRBS 1, FIN; Testeo N, si bit 1 (Z) está set, salgo de la subrutina.
+
+	SUBI N, $01 ; Actualizo el contador de iteraciones.
+
+	LD R16, X+ ; AUX (R18) va a ser mi registro auxiliar para comparar con MINI (R17), que contiene el minimo actual
+	MOV AUX, R16 ; Lo copio para realizar la suma con el registro. Sino pierdo el valor.
+
+	SUB AUX, MINI ; Resta, se actualiza N flag en SREG
+
+	BRPL LUP ; Vuelve a iterar si el resultado R16-MINI es positivo, checkeando el flag N,
+	         ; significaría que MINI es más pequeño que R16.
+
+    MOV MINI, R16 ; Si dió negativo, sigue por acá. Actualizo el nuevo mínimo (MINI).
+	BRPL LUP
+
+FIN: RET
+
