@@ -1,0 +1,100 @@
+;
+; 69869_2_0.asm
+;
+; Created: 16/5/2025 08:21:33
+; Author : nachito crack
+; Algoritmo de ordenamiento: Bubble Sort
+; Algoritmo de generación aleatoria:
+; Ocupación de la memoria de programa:
+; Ocupación de la memoria de datos (sin el vector):
+; Tiempo medio de la iteración ordenamiento:
+; Tiempo medio de la iteración generación:
+; Ubicación inicial en RAM del vector
+; Set del largo del vector deseado:
+
+.SET LAR = $05
+
+;----------------------------
+; Definiciones de constantes
+;----------------------------
+
+.DEF N = R17
+.DEF PER = R18 ; Cantidad de permutaciones
+.DEF LARX = R19 ; Largo auxiliar
+.DEF A = R20 ; Registro auxiliar para almacenenar elemento A
+.DEF B = R21 ; Registro auxiliar para almacenenar elemento B
+.DEF UNO = R16
+
+;---------------------------------
+; Generación aleatoria del vector
+;---------------------------------
+
+.DEF H = R22 ; Los cuatro registros que usa el LFSR
+.DEF MH = R23
+.DEF ML = R24
+.DEF L = R25
+
+;----------------------------
+;      Carga del vector
+;----------------------------
+
+LDI R16, $04
+STS $100, R16
+LDI R16, $01
+STS $101, R16
+LDI R16, $02
+STS $102, R16
+LDI R16, $08
+STS $103, R16
+LDI R16, $03
+STS $104, R16
+
+;-----------------------------
+;   Programa de ordenamiento
+;-----------------------------
+
+RJMP ORD
+
+ORD:LDI N, $01 ; Defino variables y constantes.
+    LDI UNO, $01
+	
+
+LUP1:
+	CLR PER ; Reseteo del flag de permutación y del largo auxiliar.
+	LDI LARX, LAR
+	SUB LARX, N
+
+	; Reseteo de los punteros X y Y:
+
+    CLR R26 ; X apunta a 0x0100
+    LDI R27, $01
+ 
+    LDI R28, $01 ; Y apunta a 0x0101
+    LDI R29, $01
+	
+	; Loop interno, se compara elemento a elemento iterativamente y se permuta si es necesario:
+
+	LUP2:LD A, X+
+	    LD B, Y+
+		SUB A, B
+		BRMI SKP; Se omite (SKiP) la permutación si el resultado es negativo.
+
+		; Bloque de permutación:
+
+		LD A, -X ; En caso de permutación, realizo un pre-decremento para negar el incremento hecho al comienzo de LUP.
+		ST X+, B
+		ST -Y, A
+		ADIW Y, $01
+		LDI PER, $01 ; Se activa el flag de permutación.
+
+	SKP:SUB LARX, UNO ; Si se terminó de recorrer el vector, salgo del lup interno.
+		BREQ CON
+		RJMP LUP2 
+
+CON:ADD N, UNO
+    TST PER ; Si el flag de permutaciones es 0, el vector está ordenado. Sino, se itera nuevamente.
+	BREQ FIN
+	RJMP LUP1
+
+FIN:RJMP FIN
+	
