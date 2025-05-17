@@ -1,0 +1,34 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.8</VERSION>
+ <DEVICE>"ATmega328P"</DEVICE>
+ <WORKING_DIR>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\Debug\PI.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>PI.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>PI.map</FILE>
+  <FILE>PI.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <GEN><FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</FILE><LINE>37</LINE></GEN>
+  <DNV><FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</FILE><LINE>44</LINE></DNV>
+  <CHAU><FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</FILE><LINE>56</LINE></CHAU>
+  <ORD><FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</FILE><LINE>62</LINE></ORD>
+  <LUP1><FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</FILE><LINE>64</LINE></LUP1>
+  <LUP2><FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</FILE><LINE>75</LINE></LUP2>
+  <SKP><FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</FILE><LINE>87</LINE></SKP>
+  <FIN><FILE>C:\Ingeñieria\Arquitectura-de-Computadores\Resoluciones ejercicios\TP2\Entregables y Proyecto Integrador TP2\Proyecto integrador TP2 (Bubble Sort)\69869_2_0\PI\PI\main.asm</FILE><LINE>95</LINE></FIN>
+ </LABELS>
+</ASSEMBLER_INFO>

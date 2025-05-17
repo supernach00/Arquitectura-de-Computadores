@@ -14,7 +14,7 @@
 ;  (Problema 4 Práctica 1 
 ;  Escriba un programa que calcule los primeros 20 elementos de la sucesión de 
 ;  Fibonacci y los almacene en orden creciente en posiciones consecutivas de memoria 
-;  empezando en 0x0040. Verificación: El vigésimo término debe valer 0x1055 y debe 
+;  empezando en 0x0100. Verificación: El vigésimo término debe valer 0x1055 y debe 
 ;  quedar almacenado en la posición de memoria 0x53.)
 
 .DEF A = R16
@@ -24,23 +24,23 @@
 RJMP STR
 
 STR:LDI A, $00 
-	STS $0040, A ; Cargo el cero en la primer posición $40.
+	STS $0100, A ; Cargo el cero en la primer posición $40.
 	LDI B, $01
-	STS $0041, B ; Cargo el uno en la segunda posición $41.
+	STS $0101, B ; Cargo el uno en la segunda posición $41.
 
-	LDI R26, $42  ; Cargo en el registro X la dirección de memoria $42. Voy a usar X de puntero.
-	CLR R27 
+	LDI R26, $01  ; Cargo en el registro X la dirección de memoria $42. Voy a usar X de puntero.
+	LDI R27, $01 
 
 	LDI N, $14 ; Cargo el contador de iteraciones en 20
 
 LUP:ADD A, B ; Sumo A+B y lo guardo en la dirección que apunta X, luego incremento X.
 	ST X+, A
 
-	LD A, -X ; Actualizo los valores de A y B
-	LD B, -X
+	LD B, -X ; Actualizo los valores de A y B
+	LD A, -X
 	ADIW X, 2
 
-	SUBI N, $01
+	DEC N
 	BRBC 1, LUP
 
 FIN: RJMP FIN

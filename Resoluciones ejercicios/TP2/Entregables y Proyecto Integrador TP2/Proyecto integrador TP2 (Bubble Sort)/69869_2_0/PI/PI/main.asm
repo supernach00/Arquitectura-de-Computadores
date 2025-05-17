@@ -1,18 +1,18 @@
 ;
-; 69869_2_0.asm
+; PI.asm
 ;
 ; Created: 16/5/2025 08:21:33
 ; Author : nachito crack
 ; Algoritmo de ordenamiento: Bubble Sort
-; Algoritmo de generaciÃ³n aleatoria: LFSR 16 bits
-; OcupaciÃ³n de la memoria de programa (solo Bubble Sort):
-; OcupaciÃ³n de la memoria de datos (sin el vector):
-; Tiempo medio de la iteraciÃ³n ordenamiento:
-; Tiempo medio de la iteraciÃ³n generaciÃ³n:
-; UbicaciÃ³n inicial en RAM del vector
+; Algoritmo de generación aleatoria: LFSR 16 bits
+; Ocupación de la memoria de programa (solo Bubble Sort):
+; Ocupación de la memoria de datos (sin el vector):
+; Tiempo medio de la iteración ordenamiento:
+; Tiempo medio de la iteración generación:
+; Ubicación inicial en RAM del vector
 ; Set del largo del vector deseado:
 
-.SET LAR = $0A
+.SET LAR = $FF
 
 ;----------------------------
 ; Definiciones de constantes
@@ -31,13 +31,13 @@
             LDI LFSRH, 0b11000110 ; Semilla H
 
 ;---------------------------------
-; GeneraciÃ³n aleatoria del vector
+; Generación aleatoria del vector
 ;---------------------------------
 
 GEN:        CLR R30           ; Inicializo el puntero Z en 0x0100
             LDI R31, $01
 
-            LDI N, LAR        ; Defino el nÃºmero de iteraciones segÃºn el largo del vector que se desea generar. 
+            LDI N, LAR        ; Defino el número de iteraciones según el largo del vector que se desea generar. 
 
             ; Realizo el XOR entre los bits 0 y 1
 
@@ -53,7 +53,7 @@ DNV:        MOV AUX, LFSRL
             DEC N
             BRNE DNV          ; De nuevo
 
-            RJMP ORD          ; Paso a ordenar el vector
+CHAU:       RJMP CHAU
 
 ;-----------------------------
 ;   Programa de ordenamiento
@@ -61,7 +61,7 @@ DNV:        MOV AUX, LFSRL
 
 ORD:        LDI N, $01        ; Defino variables y constantes.
 
-LUP1:       CLR PER           ; Reseteo del flag de permutaciÃ³n y del largo auxiliar.
+LUP1:       CLR PER           ; Reseteo del flag de permutación y del largo auxiliar.
             LDI LARX, LAR
             SUB LARX, N
 
@@ -72,25 +72,23 @@ LUP1:       CLR PER           ; Reseteo del flag de permutaciÃ³n y del largo aux
 
             ; Loop interno, se compara elemento a elemento iterativamente y se permuta si es necesario:
 
-LUP2:       LD A, Y+          
-            LD B, Y
-
+LUP2:       LD A, Y+          ; Aumento el puntero
+            LDD B, Y
             CP A, B
-            BRBS 4, SKP          ; Se omite (SKiP) la permutaciÃ³n si el resultado es negativo.
+            BRMI SKP          ; Se omite (SKiP) la permutación si el resultado es negativo.
 
-            ; Bloque de permutaciÃ³n:
+            ; Bloque de permutación:
 
-            ST -Y, B
-			ADIW Y, $01
-            ST Y, A
+            ST Y-1, B
+            STD Y, A
 
-            LDI PER, $01      ; Se activa el flag de permutaciÃ³n.
+            LDI PER, $01      ; Se activa el flag de permutación.
 
-SKP:        DEC LARX          ; Si se terminÃ³ de recorrer el vector, salgo del lup interno.
-            BRNE LUP2
+SKP:        DEC LARX          ; Si se terminó de recorrer el vector, salgo del lup interno.
+            BRNE LUP
 
             INC N
-            TST PER           ; Si el flag de permutaciones es 0, el vector estÃ¡ ordenado. Sino, se itera nuevamente.
+            TST PER           ; Si el flag de permutaciones es 0, el vector está ordenado. Sino, se itera nuevamente.
             BREQ FIN
             RJMP LUP1
 
