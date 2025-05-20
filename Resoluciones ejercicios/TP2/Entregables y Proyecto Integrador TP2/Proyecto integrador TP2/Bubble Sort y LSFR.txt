@@ -1,0 +1,130 @@
+;
+; 69869_2_0.asm
+;
+; Created: 16/5/2025 08:21:33
+; Author : nachito crack
+; Algoritmo de ordenamiento: Bubble Sort
+; Algoritmo de generación aleatoria: LFSR 16 bits
+; Ocupación de la memoria de programa (solo Bubble Sort):
+; Ocupación de la memoria de datos (sin el vector):
+; Tiempo medio de la iteración ordenamiento:
+; Tiempo medio de la iteración generación:
+; Ubicación inicial en RAM del vector: 0x0100
+
+;----------------------------
+;      Configuraciones
+;----------------------------
+
+; Set del largo del vector deseado:
+
+.SET LAR = $FF
+
+; Set de la semilla del LFSR:
+
+.SET SEEDL = 0b01100101
+.SET SEEDH = 0b01100101
+
+;----------------------------
+; Definiciones de registros
+;----------------------------
+
+.INCLUDE "M328PDEF.INC"
+.DEF N      = R17
+.DEF PER    = R18 ; Cantidad de permutaciones
+.DEF LARX   = R19 ; Largo auxiliar
+.DEF A      = R20 ; Registro auxiliar para almacenenar elemento A
+.DEF B      = R21 ; Registro auxiliar para almacenenar elemento B
+.DEF AUX    = R23
+.DEF LFSRL  = R24 ; LFSR Low 
+.DEF LFSRH  = R25 ; LFSR High
+
+;---------------------------------------------
+;                    Main
+;---------------------------------------------
+
+            LDI LFSRL, SEEDL ; Inicialización de la semilla del LFSR
+            LDI LFSRH, SEEDH 
+
+			; Incicialización de la pila
+
+			LDI AUX, high(RAMEND)   
+            OUT SPH, AUX            
+
+            LDI AUX, low(RAMEND)    
+            OUT SPL, AUX 
+			
+			; Configuro el pin 0 del puerto B como salida para el detector
+
+			LDI AUX, $01
+			OUT DDRB, AUX
+
+			; Loop generación-ordenamiento:
+			
+GO:         CBI PORTB, 0 ; El pin 0 del puerto B indica 0 si se está generando o 1 si se está ordenando.
+            CALL GEN
+            
+			SBI PORTB, 0 
+			CALL ORD
+			RJMP GO         
+
+;---------------------------------------------
+; Subrutina de eneración del vector aleatorio
+;---------------------------------------------
+
+GEN:        CLR R30           ; Inicializo el puntero Z en 0x0100
+            LDI R31, $01
+
+            LDI N, LAR        ; Defino el número de iteraciones según el largo del vector que se desea generar. 
+
+DNV:        MOV AUX, LFSRL    ; Realizo el XOR entre los bits 0 y 1
+            LSR AUX 
+            EOR AUX, LFSRL
+            LSR AUX
+            ROR LFSRH
+            ROR LFSRL
+
+            ST Z+, LFSRH      ; Guardo los 8 bits altos del LFSR
+
+            DEC N
+            BRNE DNV          ; De nuevo
+
+            RET               ; Paso a ordenar el vector
+
+;------------------------------------------
+;  Subrutina de ordenamiento (Bubble Sort)
+;------------------------------------------
+
+ORD:        LDI N, $01        ; Defino variables y constantes.
+
+LUP1:       CLR PER           ; Reseteo del flag de permutación y del largo auxiliar.
+
+            LDI LARX, LAR
+            SUB LARX, N
+
+			TST LARX          ; Checkeo si el largo del vector es cero. Si lo es
+			BREQ FIN
+
+            CLR R28           ; Reseteo el puntero Y (0x0100)
+            LDI R29, $01
+			
+LUP2:       LD A, Y+          ; Loop interno, se compara elemento a elemento iterativamente y se permuta si es necesario:
+            LD B, Y
+
+            CP A, B
+            BRLT SKP          ; Se omite (SKiP) la permutación si el resultado es negativo.
+
+            ST -Y, B          ; Bloque de permutación:
+			ADIW Y, $01
+            ST Y, A
+
+            LDI PER, $01      ; Se activa el flag de permutación.
+
+SKP:        DEC LARX          ; Si se terminó de recorrer el vector, salgo del lup interno.           
+            BRNE LUP2
+
+            INC N
+            TST PER           ; Si el flag de permutaciones es 0, el vector está ordenado. Sino, se itera nuevamente.
+            BREQ FIN
+            RJMP LUP1
+
+FIN:        RET
