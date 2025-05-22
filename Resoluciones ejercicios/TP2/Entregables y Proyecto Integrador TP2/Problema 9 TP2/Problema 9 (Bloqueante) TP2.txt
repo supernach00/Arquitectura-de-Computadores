@@ -1,0 +1,46 @@
+.INCLUDE "M328PDEF.INC"
+
+;------------------------------------
+;         RUTINA BLOQUEANTE
+;------------------------------------
+ 
+.DEF UNO = R16
+.DEF BAUX = R21
+
+RJMP NOBLOQ
+RJMP BLOQ
+
+BLOQ:       LDI UNO, $01            ; Seteo el pin 0 del puerto B como salida.
+            OUT DDRB, R16
+
+			LDI R16, low(RAMEND)   
+			OUT SPL, R16            ; Incializo la pila
+			LDI R16, high(RAMEND)  
+			OUT SPH, R16
+
+			IN BAUX, PORTB
+
+LUP:		EOR BAUX, UNO            ; Alterno el valor anterior
+			OUT PORTB, BAUX
+			
+     		CALL DELAY              ; Bloque de delay de 800.000 ciclos (A 16MHz son 0.05 s)
+            RJMP LUP
+
+DELAY:      LDI R16, $54 ;50
+			LDI R17, $32 ;84
+			LDI R18, $01 ;01
+
+LUPDELAY:	DEC R16
+			BRNE LUPDELAY
+	        LDI R16, $54
+			
+            DEC R17
+			BRNE LUPDELAY
+			NOP
+
+			LDI R17, $32
+
+			DEC R18
+			BRNE LUPDELAY
+
+			RET

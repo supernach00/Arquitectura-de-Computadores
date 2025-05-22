@@ -1,0 +1,85 @@
+;
+; Problema 9.asm
+;
+; Created: 22/5/2025 10:51:31
+; Author : nachito crack
+; Problema 9 (NO BLOQUEANTE)
+; Utilizando el LED disponible en el kit escriba un programa que lo prenda y apague 
+; 10 veces por segundo utilizando un retardo de 0.05 segundos con una rutina 
+; bloqueante (wasted cycle). ¿Qué desventaja presenta este método de temporización? 
+; ¿Cómo debería implementarse una rutina no-bloqueante? Implemente el inciso 
+; anterior de forma no bloqueante utilizando interrupciones y el módulo 
+; temporizador. ¿Cómo organizaría el programa para incorporar una tarea de 
+; background? 
+
+; El código utiliza una rutina no bloqueante para encender y apagar un led cada 50ms. 
+; Hace uso de una interrupción (rutina LEDI) que se ejecuta cada vez que el timer 1 (con pre-scaler de 64)
+; alcanza el valor 12.499.
+; Esta rutina alterna el valor del PB0, respecto de su valor anterior. Se desprecian los ciclos que le lleva a la rutina ejecutarse para
+; el cálculo del intervalo de tiempo.
+; Mientras no se está ejecutando el interrupt, se ejecuta la sección "Main" con un bucle infinito.
+
+.INCLUDE "M328PDEF.INC"
+
+.DEF UNO = R16
+.DEF BAUX = R21
+.DEF FLAG = R23
+
+            RJMP INI
+
+;------------------------------------
+;   CONFIGURACIÓN DE INTERRUPCIONES
+;------------------------------------
+
+.ORG 0x0016                          ; Acá está el vector del interrupt que voy a usar. Le escribo un jump a mi rutina de togglear led.
+
+			RJMP LEDI
+
+INI:        NOP                      ; Inicio las configuraciones:
+
+;------------------------------------
+;     CONFIGURACIÓN DEL PUERTO B
+;------------------------------------
+
+		    LDI UNO, $01             ; Configuro el pin 0 del puerto B (PB0) como salida
+			OUT DDRB, UNO
+
+;------------------------------------
+;      CONFIGURACIÓN DEL TIMER1
+;------------------------------------
+
+         	LDI R17, $30             ; Configuro el límite del timer con el registro 0CR1A en 12499 = 0x30D3
+			STS OCR1AH, R17          ; ya que: 16MHz*0.05 = 800.000 ciclos (no llego con 16 bits) 
+		    LDI R17, $D3			 ;         (16MHz/64)*0.05 = 12.500 ciclos (llego con 16 bits)
+			STS OCR1AL, R17
+
+			LDI R17, 0b00000010      ; Habilito la interrupción de comparación del canal A del Timer 1 (bit 2)
+			STS TIMSK1, R17
+
+			LDI R17, 0b00000000      ; Habilito el modo CTC (bits 0 y 1)
+			STS TCCR1A, R17
+
+			LDI R17, 0b00001011      ; Habilito el modo CTC (bits 3 y 4) y el prescaler de 64 (bits 0, 1 y 2)
+			STS TCCR1B, R17
+
+			SEI                      ; Habilito las interrupciones globales
+
+;--------------------------------------
+;                 MAIN
+;--------------------------------------
+
+DNV:        LDI R24, $10             ; Una vez finalizadas las configuraciones, este es el código que se va a ejecutar en loop (siempre que no esté siendo interrumpido)
+LUP:        DEC R24
+			BREQ DNV
+			RJMP LUP
+
+;--------------------------------------
+; RUTINA DE INTERRUPCIÓN, TOGGLEAR LED
+;--------------------------------------
+
+LEDI:       IN BAUX, PORTB           ; En este interrupt toggleo el led
+            EOR BAUX, UNO    
+			OUT PORTB, BAUX
+			INC FLAG                 ; Indica cuantas veces se va ejecutando el interrupt.
+
+			RETI                     ; Salto al vector de interrupt y de ahí a donde se estaba ejecutando el main.

@@ -1,0 +1,31 @@
+;
+; Problema 9.asm
+;
+; Created: 20/5/2025 10:51:31
+; Author : nachito crack
+; Problema 9 
+; Utilizando el LED disponible en el kit escriba un programa que lo prenda y apague 
+; 10 veces por segundo utilizando un retardo de 0.05 segundos con una rutina 
+; bloqueante (wasted cycle). ¿Qué desventaja presenta este método de temporización? 
+; ¿Cómo debería implementarse una rutina no-bloqueante? Implemente el inciso 
+; anterior de forma no bloqueante utilizando interrupciones y el módulo 
+; temporizador. ¿Cómo organizaría el programa para incorporar una tarea de 
+; background? 
+
+; La rutina bloqueante desperdicia ciclos del procesador: No puede hacer nada mientras esté esperando a que finalice.
+; Para evitar este inconveniente es que se utilizan interrupciones.
+
+;------------------------------------
+;        RUTINA BLOQUEANTE
+;------------------------------------
+
+RJMP INI
+
+INI:        LDI R16, $01            ; Seteo el pin 0 del puerto B como salida.
+            OUT DDRB, R16
+
+LUP:		IN R16, PORTB0           ; Prendo el pin, y espero
+			EOR R16, PORTB0
+			OUT PORTB0, R16
+			; aca va el diley
+			RJMP LUP
